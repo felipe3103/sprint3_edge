@@ -6,13 +6,13 @@
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
-const char* ssid = "felipefernandes";  // Seu SSID de WiFi
-const char* password = "Fetica310306"; // Sua senha de WiFi
-const String fiware_url = "http://20.201.119.198:1026/v2/entities/ESP32Device/attrs";
+const char* ssid = "Wokwi-GUEST";  // Seu SSID de WiFi
+const char* password = ""; // Sua senha de WiFi
+const String fiware_url = "http://4.228.227.116/v2/entities/ESP32Device/attrs";
 
 void setup() {
   Serial.begin(115200);
-  
+
   // Conectar ao Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -20,7 +20,7 @@ void setup() {
     Serial.println("Connecting to WiFi...");
   }
   Serial.println("Connected to WiFi");
-  
+
   // Iniciar o sensor DHT
   dht.begin();
 }
@@ -44,8 +44,10 @@ void loop() {
     http.begin(fiware_url);  // Conectar ao Orion Context Broker
     http.addHeader("Content-Type", "application/json");
 
-    // Montando o JSON para envio
-    String postData = "{\"temperature\": {\"value\": " + String(temperature) + ", \"type\": \"Float\"}, \"humidity\": {\"value\": " + String(humidity) + ", \"type\": \"Float\"}, \"luminosity\": {\"value\": " + String(luminosity) + ", \"type\": \"Integer\"}}";
+    // Montando o JSON para envio (reformulando para melhor uso de memória)
+    String postData = "{\"temperature\":{\"value\":" + String(temperature, 2) + ",\"type\":\"Float\"},"
+                      "\"humidity\":{\"value\":" + String(humidity, 2) + ",\"type\":\"Float\"},"
+                      "\"luminosity\":{\"value\":" + String(luminosity) + ",\"type\":\"Integer\"}}";
 
     // Enviando dados com requisição PUT
     int httpResponseCode = http.PUT(postData);
@@ -56,7 +58,7 @@ void loop() {
       Serial.println("HTTP Response code: " + String(httpResponseCode));
       Serial.println("Response: " + response);
     } else {
-      Serial.println("Error on sending PUT request");
+      Serial.println("Error on sending PUT request: " + String(httpResponseCode));
     }
 
     http.end();  // Finalizar conexão HTTP
