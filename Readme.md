@@ -71,7 +71,7 @@ arquitetura do projeto
 
 
 
-![alt text](image.png)
+![alt text](FiwareDeploy_new_v4.JPG)
 
 integrantes:
 Felipe Fernandes -554598
